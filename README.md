@@ -74,6 +74,12 @@ It uses [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlan
     - The extension will load the JavaScript from the `url` you provided in the `application` definition/
     - Reloading the extension page will bring in any new code changes from the extension template.
 
+## Troubleshooting
+
+### My extension does not appear under the Browse menu
+
+If you followed steps 1—10 above and your extension does not appear in the browse menu, the necessary labs feature may not be enabled. If you have administrator access, visit Admin > Labs and enable the `Extension Framework` option.
+
 ## Deployment
 
 The process above requires your local development server to be running to load the extension code. To allow other people to use the extension, we can build the JavaScript file and include it in the project directly.
