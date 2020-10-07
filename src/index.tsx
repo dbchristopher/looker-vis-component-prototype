@@ -27,7 +27,7 @@ import * as ReactDOM from "react-dom";
 import { Page } from "./layout";
 import { Query } from "./vis";
 import { ExtensionProvider } from "@looker/extension-sdk-react";
-import { ComponentsProvider, Spinner, Flex } from "@looker/components";
+import { ComponentsProvider, Spinner, Flex, Heading } from "@looker/components";
 
 window.addEventListener("DOMContentLoaded", async (event) => {
   const root = document.createElement("div");
@@ -47,11 +47,10 @@ window.addEventListener("DOMContentLoaded", async (event) => {
     >
       <ComponentsProvider>
         <Page>
-          {/*
-           * having to do "as IRequestRunQuery" will be annoying for developers.
-           * need a better way to type this.
-           */}
-          <Query queryId={123} />
+          <Heading>Query from ID:</Heading>
+          <Query queryId={126} />
+          <Heading>Query From Slug:</Heading>
+          <Query querySlug="ncc4g4V83iRVWjKUa7MFkF" />
         </Page>
       </ComponentsProvider>
     </ExtensionProvider>,

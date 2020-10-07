@@ -23,11 +23,12 @@
  */
 
 import React, { FC, useEffect, useState, useContext } from "react";
+import { Flex, Spinner } from "@looker/components";
 import { ExtensionContext } from "@looker/extension-sdk-react";
 
 /*
- * query_for_slug('I2HlRYpd8beuaQySJsUPp7', 'id') to get id
- * run_query('123', 'json')
+ * query_for_slug('ncc4g4V83iRVWjKUa7MFkF', 'id') to get id
+ * run_query('126', 'json')
  */
 
 interface QueryProps {
@@ -35,27 +36,64 @@ interface QueryProps {
   querySlug?: string;
 }
 
-export const Query: FC<QueryProps> = ({ queryId }) => {
-  const [queryResult, setQueryResult] = useState({});
-  const { core31SDK } = useContext(ExtensionContext);
+const LoadingIndicator = () => (
+  <Flex alignItems="center" justifyContent="center">
+    <Spinner color="black" />
+  </Flex>
+);
 
-  // TODO: get query id if they provide the slug
+interface Collection {
+  [k: string]: string | number;
+}
 
+interface SDKResponse {
+  ok: boolean;
+  value: Collection[];
+}
+
+export const Query: FC<QueryProps> = ({ queryId: queryIdProp, querySlug }) => {
+  const [queryId, setQueryId] = useState<number | undefined>(queryIdProp);
+  const [queryResult, setQueryResult] = useState<SDKResponse>({
+    ok: true,
+    value: [],
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const { core40SDK } = useContext(ExtensionContext);
+
+  // get query ID from slug
   useEffect(() => {
-    const runQuery = async (id: number) => {
-      const results = await core31SDK.run_query({
+    const fetchQueryId = async (slug: string) => {
+      setIsLoading(true);
+      const result = await core40SDK.query_for_slug(slug, "id");
+      setQueryId(((result as unknown) as SDKResponse).value?.id);
+      setIsLoading(false);
+    };
+
+    if (querySlug) {
+      fetchQueryId(querySlug);
+    }
+  }, [querySlug]);
+
+  // get full query response
+  useEffect(() => {
+    const fetchQueryResult = async (id: number) => {
+      setIsLoading(true);
+      const result = await core40SDK.run_query({
         query_id: id,
         result_format: "json",
       });
-      setQueryResult(results);
+
+      // Not sure why result isn't matching the SDKResponse interface
+      setQueryResult((result as unknown) as SDKResponse);
+
+      // TODO: handle timeout errors; how do we PREVENT timeout errors?
+      setIsLoading(false);
     };
 
     if (queryId) {
-      runQuery(queryId);
+      fetchQueryResult(queryId);
     }
   }, [queryId]);
 
-  console.log("RESULT", queryResult);
-
-  return <>QUERY</>;
+  return <>{isLoading && <LoadingIndicator />}</>;
 };
