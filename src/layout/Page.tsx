@@ -22,39 +22,8 @@
  * THE SOFTWARE.
  */
 
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { Page } from "./layout";
-import { Query } from "./vis";
-import { ExtensionProvider } from "@looker/extension-sdk-react";
-import { ComponentsProvider, Spinner, Flex } from "@looker/components";
+import styled from "styled-components";
 
-window.addEventListener("DOMContentLoaded", async (event) => {
-  const root = document.createElement("div");
-  document.body.appendChild(root);
-
-  const loading = (
-    <Flex width="100%" height="90%" alignItems="center" justifyContent="center">
-      <Spinner color="black" />
-    </Flex>
-  );
-
-  ReactDOM.render(
-    // ExtensionProvider provides subcomponents access to the Looker Extension SDK
-    <ExtensionProvider
-      loadingComponent={loading}
-      requiredLookerVersion=">=7.0.0"
-    >
-      <ComponentsProvider>
-        <Page>
-          {/*
-           * having to do "as IRequestRunQuery" will be annoying for developers.
-           * need a better way to type this.
-           */}
-          <Query queryId={123} />
-        </Page>
-      </ComponentsProvider>
-    </ExtensionProvider>,
-    root
-  );
-});
+export const Page = styled.div`
+  padding: ${({ theme }) => theme.space.xlarge};
+`;
