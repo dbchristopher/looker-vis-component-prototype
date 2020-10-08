@@ -24,10 +24,9 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Page } from "./layout";
-import { Query } from "./vis";
+import { QueryDemo } from "./layout";
 import { ExtensionProvider } from "@looker/extension-sdk-react";
-import { ComponentsProvider, Spinner, Flex, Heading } from "@looker/components";
+import { ComponentsProvider, Spinner, Flex } from "@looker/components";
 
 window.addEventListener("DOMContentLoaded", async (event) => {
   const root = document.createElement("div");
@@ -46,12 +45,7 @@ window.addEventListener("DOMContentLoaded", async (event) => {
       requiredLookerVersion=">=7.0.0"
     >
       <ComponentsProvider>
-        <Page>
-          <Heading>Query from ID:</Heading>
-          <Query queryId={126} />
-          <Heading>Query From Slug:</Heading>
-          <Query querySlug="ncc4g4V83iRVWjKUa7MFkF" />
-        </Page>
+        <QueryDemo />
       </ComponentsProvider>
     </ExtensionProvider>,
     root

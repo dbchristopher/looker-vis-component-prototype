@@ -23,3 +23,4 @@
  */
 
 export { Page } from "./Page";
+export { QueryDemo } from "./QueryDemo";

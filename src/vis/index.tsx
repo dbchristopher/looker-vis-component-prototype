@@ -23,3 +23,4 @@
  */
 
 export { Query } from "./Query";
+export { Visualization } from "./Visualization";

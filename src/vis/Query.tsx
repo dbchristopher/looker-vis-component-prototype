@@ -23,8 +23,10 @@
  */
 
 import React, { FC, useEffect, useState, useContext } from "react";
+import isEmpty from "lodash/isEmpty";
 import { Flex, Spinner } from "@looker/components";
 import { ExtensionContext } from "@looker/extension-sdk-react";
+import { Collection, SDKResponse, QueryContext } from "./QueryContext";
 
 /*
  * query_for_slug('ncc4g4V83iRVWjKUa7MFkF', 'id') to get id
@@ -34,6 +36,7 @@ import { ExtensionContext } from "@looker/extension-sdk-react";
 interface QueryProps {
   queryId?: number;
   querySlug?: string;
+  children: React.ReactElement;
 }
 
 const LoadingIndicator = () => (
@@ -42,17 +45,13 @@ const LoadingIndicator = () => (
   </Flex>
 );
 
-interface Collection {
-  [k: string]: string | number;
-}
-
-interface SDKResponse {
-  ok: boolean;
-  value: Collection[];
-}
-
-export const Query: FC<QueryProps> = ({ queryId: queryIdProp, querySlug }) => {
+export const Query: FC<QueryProps> = ({
+  queryId: queryIdProp,
+  querySlug,
+  children,
+}) => {
   const [queryId, setQueryId] = useState<number | undefined>(queryIdProp);
+  const [visConfig, setVisConfig] = useState<Collection>({});
   const [queryResult, setQueryResult] = useState<SDKResponse>({
     ok: true,
     value: [],
@@ -64,8 +63,14 @@ export const Query: FC<QueryProps> = ({ queryId: queryIdProp, querySlug }) => {
   useEffect(() => {
     const fetchQueryId = async (slug: string) => {
       setIsLoading(true);
-      const result = await core40SDK.query_for_slug(slug, "id");
-      setQueryId(((result as unknown) as SDKResponse).value?.id);
+      const result = await core40SDK.query_for_slug(slug, "id, vis_config");
+      const value = ((result as unknown) as SDKResponse).value;
+      if ("id" in value) {
+        setQueryId(Number(value.id));
+      }
+      if ("vis_config" in value) {
+        setVisConfig((value.vis_config as unknown) as Collection);
+      }
       setIsLoading(false);
     };
 
@@ -90,10 +95,25 @@ export const Query: FC<QueryProps> = ({ queryId: queryIdProp, querySlug }) => {
       setIsLoading(false);
     };
 
+    const fetchVisConfig = async (id: number) => {
+      const config = await core40SDK.query(id, "vis_config");
+      if ("vis_config" in config) {
+        setVisConfig((config as any).vis_config);
+      }
+    };
+
     if (queryId) {
       fetchQueryResult(queryId);
     }
-  }, [queryId]);
 
-  return <>{isLoading && <LoadingIndicator />}</>;
+    if (queryId && isEmpty(visConfig)) {
+      fetchVisConfig(queryId);
+    }
+  }, [queryId, visConfig]);
+
+  return (
+    <QueryContext.Provider value={{ result: queryResult, config: visConfig }}>
+      {isLoading ? <LoadingIndicator /> : children}
+    </QueryContext.Provider>
+  );
 };
