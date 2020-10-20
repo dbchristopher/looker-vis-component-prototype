@@ -24,8 +24,8 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { QueryDemo } from "./layout";
 import { ExtensionProvider } from "@looker/extension-sdk-react";
+import { QueryDemo } from "./layout";
 import { ComponentsProvider, Spinner, Flex } from "@looker/components";
 
 window.addEventListener("DOMContentLoaded", async (event) => {
