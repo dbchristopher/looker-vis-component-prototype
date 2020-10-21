@@ -33,9 +33,16 @@ window.addEventListener("DOMContentLoaded", async (event) => {
   document.body.appendChild(root);
 
   const loading = (
-    <Flex width="100%" height="90%" alignItems="center" justifyContent="center">
-      <Spinner color="black" />
-    </Flex>
+    <ComponentsProvider>
+      <Flex
+        width="100%"
+        height="90%"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Spinner />
+      </Flex>
+    </ComponentsProvider>
   );
 
   ReactDOM.render(
@@ -44,7 +51,7 @@ window.addEventListener("DOMContentLoaded", async (event) => {
       loadingComponent={loading}
       requiredLookerVersion=">=7.0.0"
     >
-      <ComponentsProvider>
+      <ComponentsProvider loadGoogleFonts>
         <QueryDemo />
       </ComponentsProvider>
     </ExtensionProvider>,
